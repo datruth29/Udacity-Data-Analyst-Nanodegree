@@ -92,7 +92,7 @@ def usage_stats(data, filters=False, verbose=True):
     return duration_qtiles
 
 
-def usage_plot(data, key='', filters=False, size=(8, 6), **kwargs):
+def usage_plot(data, key='', filters=False, size=(8, 6), show_usage_stats=False, **kwargs):
     """
     Plot number of trips, given a feature of interest and any number of filters
     (including no filters). Function takes a number of optional arguments for
@@ -112,6 +112,8 @@ def usage_plot(data, key='', filters=False, size=(8, 6), **kwargs):
     if key not in data.columns.values:
         raise Exception(
             "'{}' is not a feature of the dataframe. Did you spell something wrong?".format(key))
+    if show_usage_stats:
+        usage_stats(data, filters)
 
     # Apply filters to data
     if filters:
