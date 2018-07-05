@@ -16,15 +16,22 @@ You should only change the parse_file function.
 import csv
 import os
 
-DATADIR = ""
+DATADIR = os.path.dirname(os.path.realpath(__file__))
 DATAFILE = "745090.csv"
 
 
 def parse_file(datafile):
     name = ""
     data = []
-    with open(datafile,'rb') as f:
-        pass
+    with open(datafile, 'rb') as f:
+        r = csv.reader(f)
+        toprow = next(r)
+        name = toprow[1]
+        next(r)
+        for row in r:
+            data.append(row)
+            #print(row)
+
     # Do not change the line below
     return (name, data)
 
