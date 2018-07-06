@@ -10,6 +10,7 @@ numpy = "*"
 jupyter = "*"
 seaborn = "*"
 requests = "*"
+"beautifulsoup4" = "*"
 
 [dev-packages]
 
