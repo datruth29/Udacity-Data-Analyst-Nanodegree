@@ -7,14 +7,19 @@
 from bs4 import BeautifulSoup
 import requests
 import json
+import os
 
-html_page = "page_source.html"
+DATADIR = os.path.dirname(os.path.realpath(__file__))
+html_page = os.path.join(DATADIR, "page_source.html")
 
 
 def extract_data(page):
     data = {"eventvalidation": "",
             "viewstate": ""}
     with open(page, "r") as html:
+        soup = BeautifulSoup(html, 'html.parser')
+        data['viewstate'] = soup.find(id='__VIEWSTATE')['value']
+        data['eventvalidation'] = soup.find(id='__EVENTVALIDATION')['value']
         # do something here to find the necessary values
         pass
 
