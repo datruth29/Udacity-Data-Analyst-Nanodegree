@@ -5,8 +5,10 @@
 # The tags for first name, surname and email should map directly
 # to the dictionary keys
 import xml.etree.ElementTree as ET
+import os
 
-article_file = "exampleResearchArticle.xml"
+DATADIR = os.path.dirname(os.path.realpath(__file__))
+article_file = os.path.join(DATADIR, "exampleResearchArticle.xml")
 
 
 def get_root(fname):
@@ -23,7 +25,9 @@ def get_authors(root):
                 "email": None
         }
 
-        # YOUR CODE HERE
+        data['fnm'] = author.find('fnm').text
+        data['snm'] = author.find('snm').text
+        data['email'] = author.find('email').text
 
         authors.append(data)
 
