@@ -20,7 +20,6 @@ def extract_data(page):
         soup = BeautifulSoup(html, 'html.parser')
         data['viewstate'] = soup.find(id='__VIEWSTATE')['value']
         data['eventvalidation'] = soup.find(id='__EVENTVALIDATION')['value']
-        # do something here to find the necessary values
         pass
 
     return data

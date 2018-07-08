@@ -10,16 +10,22 @@
 # You should return a list of codes for the carriers.
 
 from bs4 import BeautifulSoup
-html_page = "options.html"
+import os
+
+DATADIR = os.path.dirname(os.path.realpath(__file__))
+html_page = os.path.join(DATADIR, "options.html")
 
 
 def extract_carriers(page):
     data = []
 
     with open(page, "r") as html:
-        # do something here to find the necessary values
-        soup = BeautifulSoup(html)
-
+        soup = BeautifulSoup(html, 'html5lib')
+        carrierList = soup.find(id='CarrierList')
+        for child in carrierList.find_all('option'):
+            carrier = child['value']
+            if len(carrier) == 2:
+                data.append(carrier)
     return data
 
 
@@ -30,14 +36,14 @@ def make_request(data):
     carrier = data["carrier"]
 
     r = requests.post("http://www.transtats.bts.gov/Data_Elements.aspx?Data=2",
-                    data={'AirportList': airport,
-                          'CarrierList': carrier,
-                          'Submit': 'Submit',
-                          "__EVENTTARGET": "",
-                          "__EVENTARGUMENT": "",
-                          "__EVENTVALIDATION": eventvalidation,
-                          "__VIEWSTATE": viewstate
-                    })
+                      data={'AirportList': airport,
+                            'CarrierList': carrier,
+                            'Submit': 'Submit',
+                            "__EVENTTARGET": "",
+                            "__EVENTARGUMENT": "",
+                            "__EVENTVALIDATION": eventvalidation,
+                            "__VIEWSTATE": viewstate
+                            })
 
     return r.text
 
@@ -47,5 +53,6 @@ def test():
     assert len(data) == 16
     assert "FL" in data
     assert "NK" in data
+
 
 test()
