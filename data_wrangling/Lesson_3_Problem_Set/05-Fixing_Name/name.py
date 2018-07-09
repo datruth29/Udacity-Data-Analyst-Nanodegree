@@ -4,7 +4,7 @@
 In this problem set you work with cities infobox data, audit it, come up with a cleaning idea and then clean it up.
 
 In the previous quiz you recognized that the "name" value can be an array (or list in Python terms).
-It would make it easier to process and query the data later, if all values for the name 
+It would make it easier to process and query the data later, if all values for the name
 would be in a Python list, instead of being just a string separated with special characters, like now.
 
 Finish the function fix_name(). It will recieve a string as an input, and it has to return a list
@@ -15,22 +15,26 @@ The rest of the code is just an example on how this function can be used
 import codecs
 import csv
 import pprint
+import os
 
-CITIES = 'cities.csv'
+DATADIR = os.path.dirname(os.path.realpath(__file__))
+CITIES = os.path.join(DATADIR, 'cities.csv')
 
 
 def fix_name(name):
+    names = []
+    if name and name != 'NONE' and name != 'NULL':
+        split = name.strip('{}').split('|')
+        names.extend(split)
 
-    # YOUR CODE HERE
-
-    return name
+    return names
 
 
 def process_file(filename):
     data = []
     with open(filename, "r") as f:
         reader = csv.DictReader(f)
-        #skipping the extra matadata
+        # skipping the extra matadata
         for i in range(3):
             l = reader.next()
         # processing file
@@ -51,6 +55,7 @@ def test():
 
     assert data[14]["name"] == ['Negtemiut', 'Nightmute']
     assert data[3]["name"] == ['Kumhari']
+
 
 if __name__ == "__main__":
     test()
