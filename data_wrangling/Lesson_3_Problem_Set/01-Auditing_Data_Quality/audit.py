@@ -17,30 +17,62 @@ All the data initially is a string, so you have to do some checks on the values 
 import codecs
 import csv
 import json
-import pprint
+from pprint import pprint
+import os
 
-CITIES = 'cities.csv'
+DATADIR = os.path.dirname(os.path.realpath(__file__))
+CITIES = os.path.join(DATADIR, 'cities.csv')
 
-FIELDS = ["name", "timeZone_label", "utcOffset", "homepage", "governmentType_label", "isPartOf_label", "areaCode", "populationTotal", 
-          "elevation", "maximumElevation", "minimumElevation", "populationDensity", "wgs84_pos#lat", "wgs84_pos#long", 
+FIELDS = ["name", "timeZone_label", "utcOffset", "homepage", "governmentType_label", "isPartOf_label", "areaCode", "populationTotal",
+          "elevation", "maximumElevation", "minimumElevation", "populationDensity", "wgs84_pos#lat", "wgs84_pos#long",
           "areaLand", "areaMetro", "areaUrban"]
+
+
+def is_float(text):
+    try:
+        float(text)
+        return True
+    except ValueError:
+        return False
+
+
+def get_field_type(field):
+    if field == 'NULL' or field == '':
+        return type(None)
+    if field[0] == '{':
+        return type([])
+    if field.isdigit():
+        return type(1)
+    if is_float(field):
+        return type(1.1)
+    return type('str')
+
 
 def audit_file(filename, fields):
     fieldtypes = {}
-
-    # YOUR CODE HERE
-
-
+    with open(filename, 'r') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row['URI'].find("dbpedia.org") < 0:
+                continue
+            for field in FIELDS:
+                data = row[field]
+                types = fieldtypes.get(field, set())
+                data_type = get_field_type(data)
+                if data_type not in types:
+                    types.add(data_type)
+                    fieldtypes[field] = types
     return fieldtypes
 
 
 def test():
     fieldtypes = audit_file(CITIES, FIELDS)
 
-    pprint.pprint(fieldtypes)
+    pprint(fieldtypes)
 
     assert fieldtypes["areaLand"] == set([type(1.1), type([]), type(None)])
     assert fieldtypes['areaMetro'] == set([type(1.1), type(None)])
-    
+
+
 if __name__ == "__main__":
     test()

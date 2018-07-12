@@ -10,8 +10,11 @@
 # The original file is ~600MB large, you might not be able to open it in a text editor.
 
 import xml.etree.ElementTree as ET
+import os
 
-PATENTS = 'patent.data'
+DATADIR = os.path.dirname(os.path.realpath(__file__))
+PATENTS = os.path.join(DATADIR, 'patent.data')
+
 
 def get_root(fname):
 
