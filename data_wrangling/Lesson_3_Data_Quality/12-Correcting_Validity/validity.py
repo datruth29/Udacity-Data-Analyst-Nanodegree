@@ -17,29 +17,44 @@ You can write helper functions for checking the data and writing the files, but 
 'process_file' with 3 arguments (inputfile, output_good, output_bad).
 """
 import csv
-import pprint
+import os
 
-INPUT_FILE = 'autos.csv'
-OUTPUT_GOOD = 'autos-valid.csv'
-OUTPUT_BAD = 'FIXME-autos.csv'
+DATADIR = os.path.dirname(os.path.realpath(__file__))
+INPUT_FILE = os.path.join(DATADIR, 'autos.csv')
+OUTPUT_GOOD = os.path.join(DATADIR, 'autos-valid.csv')
+OUTPUT_BAD = os.path.join(DATADIR, 'FIXME-autos.csv')
+
+
+def yearValid(year):
+    return year.isdigit() and int(year) >= 1886 and int(year) <= 2014
+
 
 def process_file(input_file, output_good, output_bad):
+    good_data = []
+    bad_data = []
 
     with open(input_file, "r") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
+        for row in reader:
+            if row['URI'].find("dbpedia.org") < 0:
+                continue
+            year = row['productionStartYear'][:4]
+            if yearValid(year):
+                row['productionStartYear'] = int(year)
+                good_data.append(row)
+            else:
+                bad_data.append(row)
 
-        #COMPLETE THIS FUNCTION
-
-
-
-    # This is just an example on how you can use csv.DictWriter
-    # Remember that you have to output 2 files
-    with open(output_good, "w") as g:
-        writer = csv.DictWriter(g, delimiter=",", fieldnames= header)
+    with open(OUTPUT_GOOD, "w", newline='') as g:
+        writer = csv.DictWriter(g, delimiter=",", fieldnames=header)
         writer.writeheader()
-        for row in YOURDATA:
-            writer.writerow(row)
+        writer.writerows(good_data)
+
+    with open(OUTPUT_BAD, 'w', newline='') as g:
+        writer = csv.DictWriter(g, delimiter=",", fieldnames=header)
+        writer.writeheader()
+        writer.writerows(bad_data)
 
 
 def test():

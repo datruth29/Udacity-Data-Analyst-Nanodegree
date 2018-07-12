@@ -16,16 +16,16 @@ import codecs
 import csv
 import json
 import pprint
+import os
 
-CITIES = 'cities.csv'
+DATADIR = os.path.dirname(os.path.realpath(__file__))
+CITIES = os.path.join(DATADIR, 'cities.csv')
 
 
 def fix_area(area):
-
-    # YOUR CODE HERE
-
-    return area
-
+    if area == 'NULL' or area == '':
+        return None
+    return float(max(area.strip('{}').split('|'), key=len))
 
 
 def process_file(filename):
@@ -35,9 +35,9 @@ def process_file(filename):
     with open(filename, "r") as f:
         reader = csv.DictReader(f)
 
-        #skipping the extra matadata
+        # skipping the extra matadata
         for i in range(3):
-            l = reader.next()
+            l = next(reader)
 
         # processing file
         for line in reader:
@@ -52,10 +52,11 @@ def process_file(filename):
 def test():
     data = process_file(CITIES)
 
-    print "Printing three example results:"
-    for n in range(5,8):
+    print("Printing three example results:")
+    for n in range(5, 8):
         pprint.pprint(data[n]["areaLand"])
 
+    print(data[8]['areaLand'])
     assert data[8]["areaLand"] == 55166700.0
     assert data[3]["areaLand"] == None
 

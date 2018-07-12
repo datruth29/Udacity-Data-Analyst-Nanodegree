@@ -18,28 +18,34 @@ The rest of the code is just an example on how this function can be used.
 Changes to "process_file" function will not be take into account.
 """
 import csv
-import pprint
+import os
 
-CITIES = 'cities.csv'
+DATADIR = os.path.dirname(os.path.realpath(__file__))
+CITIES = os.path.join(DATADIR, 'cities.csv')
 
 
 def check_loc(point, lat, longi):
-    # YOUR CODE HERE
-    
-    pass
+    points = map(float, point.split(' '))
+    print(points)
+    lat = float(lat)
+    longi = float(longi)
+    if points[0] == lat and points[1] == longi:
+        return True
+    return False
 
 
 def process_file(filename):
     data = []
     with open(filename, "r") as f:
         reader = csv.DictReader(f)
-        #skipping the extra matadata
+        # skipping the extra matadata
         for i in range(3):
-            l = reader.next()
+            reader.next()
         # processing file
         for line in reader:
             # calling your function to check the location
-            result = check_loc(line["point"], line["wgs84_pos#lat"], line["wgs84_pos#long"])
+            result = check_loc(
+                line["point"], line["wgs84_pos#lat"], line["wgs84_pos#long"])
             if not result:
                 print "{}: {} != {} {}".format(line["name"], line["point"], line["wgs84_pos#lat"], line["wgs84_pos#long"])
             data.append(line)
@@ -49,7 +55,9 @@ def process_file(filename):
 
 def test():
     assert check_loc("33.08 75.28", "33.08", "75.28") == True
-    assert check_loc("44.57833333333333 -91.21833333333333", "44.5783", "-91.2183") == False
+    assert check_loc("44.57833333333333 -91.21833333333333",
+                     "44.5783", "-91.2183") == False
+
 
 if __name__ == "__main__":
     test()

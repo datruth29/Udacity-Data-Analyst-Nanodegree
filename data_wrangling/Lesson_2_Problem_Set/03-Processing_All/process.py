@@ -12,7 +12,8 @@ from bs4 import BeautifulSoup
 from zipfile import ZipFile
 import os
 
-datadir = "data"
+SCRIPT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
+datadir = os.path.join(SCRIPT_DIRECTORY, "data")
 
 
 def open_zip(datadir):
@@ -26,33 +27,30 @@ def process_all(datadir):
 
 
 def process_file(f):
-    # This is example of the datastructure you should return
-    # Each item in the list should be a dictionary containing all the relevant data
-    # Note - year, month, and the flight data should be integers
-    # You should skip the rows that contain the TOTAL data for a year
-    # data = [{"courier": "FL",
-    #         "airport": "ATL",
-    #         "year": 2012,
-    #         "month": 12,
-    #         "flights": {"domestic": 100,
-    #                     "international": 100}
-    #         },
-    #         {"courier": "..."}
-    # ]
     data = []
     info = {}
     info["courier"], info["airport"] = f[:6].split("-")
-    
+
     with open("{}/{}".format(datadir, f), "r") as html:
 
-        soup = BeautifulSoup(html)
-
+        soup = BeautifulSoup(html, 'html5lib')
+        table = soup.find(id='DataGrid1')
+        rows = table.find_all('tr', class_='dataTDRight')
+        for row in rows:
+            cells = row.find_all('td')
+            if cells[1].text != 'TOTAL':
+                info['year'] = int(cells[0].text)
+                info['month'] = int(cells[1].text)
+                domestic = int(cells[2].text.replace(',', ''))
+                international = int(cells[3].text.replace(',', ''))
+                info['flights'] = {"domestic": domestic,
+                                   "international": international}
+                data.append(info)
     return data
 
 
 def test():
     print "Running a simple test..."
-    open_zip(datadir)
     files = process_all(datadir)
     data = []
     for f in files:
@@ -64,6 +62,7 @@ def test():
         assert len(entry["airport"]) == 3
         assert len(entry["courier"]) == 2
     print "... success!"
+
 
 if __name__ == "__main__":
     test()
