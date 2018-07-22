@@ -11,6 +11,7 @@ jupyter = "*"
 seaborn = "*"
 requests = "*"
 "beautifulsoup4" = "*"
+cerberus = "*"
 
 [dev-packages]
 
