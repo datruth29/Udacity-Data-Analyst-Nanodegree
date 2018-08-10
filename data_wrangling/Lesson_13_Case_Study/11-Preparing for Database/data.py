@@ -159,18 +159,21 @@ import codecs
 import pprint
 import re
 import xml.etree.cElementTree as ET
+import os
 
 import cerberus
 
 import schema
 
-OSM_PATH = "example.osm"
+DATADIR = os.path.dirname(os.path.realpath(__file__))
 
-NODES_PATH = "nodes.csv"
-NODE_TAGS_PATH = "nodes_tags.csv"
-WAYS_PATH = "ways.csv"
-WAY_NODES_PATH = "ways_nodes.csv"
-WAY_TAGS_PATH = "ways_tags.csv"
+OSM_PATH = os.path.join(DATADIR, "example.osm")
+
+NODES_PATH = os.path.join(DATADIR, "nodes.csv")
+NODE_TAGS_PATH = os.path.join(DATADIR, "nodes_tags.csv")
+WAYS_PATH = os.path.join(DATADIR, "ways.csv")
+WAY_NODES_PATH = os.path.join(DATADIR, "ways_nodes.csv")
+WAY_TAGS_PATH = os.path.join(DATADIR, "ways_tags.csv")
 
 LOWER_COLON = re.compile(r'^([a-z]|_)+:([a-z]|_)+')
 PROBLEMCHARS = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
@@ -194,6 +197,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
     way_attribs = {}
     way_nodes = []
     tags = []  # Handle secondary tags the same way for both node and way elements
+    print(element)
 
     # YOUR CODE HERE
     if element.tag == 'node':
